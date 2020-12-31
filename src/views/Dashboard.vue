@@ -5,14 +5,17 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useRouter } from "vue-router";
 import { auth } from "../firebase";
 
 export default defineComponent({
   name: "Dashboard",
   setup() {
+    const router = useRouter();
     const onUserLogout = async () => {
       try {
         await auth.signOut();
+        router.push({ name: "Login" });
       } catch (err) {
         console.log("Unable to logout.");
       }

@@ -6,20 +6,8 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
-import { auth } from "./firebase";
 
 export default defineComponent({
   name: "App",
-  setup() {
-    const router = useRouter();
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        router.push({ name: "Dashboard" });
-      } else {
-        router.push({ name: "Login" });
-      }
-    });
-  },
 });
 </script>

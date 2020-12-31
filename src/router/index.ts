@@ -16,11 +16,16 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/login",
     name: "Login",
-    component: () => import("../views/Login.vue"),
+    component: () =>
+      import(/* webpackChunkName: "Login" */ "../views/Login.vue"),
     meta: {
       requiresAuth: false,
       title: "Login",
     },
+  },
+  {
+    path: "/:catchAll(.*)*",
+    redirect: { name: "Dashboard" },
   },
 ];
 
@@ -32,7 +37,6 @@ const router = createRouter({
 // checks if user is logged in on every navigation
 // uses some cool new features of Vue Router 4
 router.beforeEach(to => {
-  document.title = to.meta.title || "Firebase Chat App";
   if (to.meta.requiresAuth && !auth.currentUser) {
     return { name: "Login" }; // just to be explicit, use the name of the route
   } else if (!to.meta.requiresAuth && auth.currentUser) {
