@@ -1,5 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/database";
 
 firebase.initializeApp({
   apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
@@ -10,7 +11,11 @@ firebase.initializeApp({
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 });
 
+const database = firebase.database();
 export const auth = firebase.auth();
+export const roomsRef = database.ref("rooms");
+export const messagesRef = database.ref("messages");
+export const membersRef = database.ref("members");
 export const createAuthProvider = () => {
   return new firebase.auth.GoogleAuthProvider();
 };

@@ -1,6 +1,6 @@
 <template>
   <h1>This is our dashboard</h1>
-  <button @click="onUserLogout" class="bg-red-500">Logout</button>
+  <button @click="onUserLogout" class="bg-red-500">Log Out</button>
 </template>
 
 <script lang="ts">
@@ -12,7 +12,7 @@ export default defineComponent({
   name: "Dashboard",
   setup() {
     const router = useRouter();
-    const onUserLogout = async () => {
+    const onUserLogout = async (): Promise<void> => {
       try {
         await auth.signOut();
         router.push({ name: "Login" });

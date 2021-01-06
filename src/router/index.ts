@@ -24,6 +24,15 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/room",
+    name: "Room",
+    component: () => import(/* webpackChunkName: "Room" */ "../views/Room.vue"),
+    meta: {
+      requiresAuth: true,
+      title: "Room",
+    },
+  },
+  {
     path: "/:catchAll(.*)*",
     redirect: { name: "Dashboard" },
   },

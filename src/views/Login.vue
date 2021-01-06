@@ -18,7 +18,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const signInWithGoogle = async () => {
+    const signInWithGoogle = async (): Promise<void> => {
       const provider = createAuthProvider();
       try {
         await auth.signInWithPopup(provider);
