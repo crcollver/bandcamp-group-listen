@@ -7,17 +7,20 @@
       :room="room"
     />
   </div>
+  <router-link to="/room">To Room</router-link>
   <div v-if="allRooms.loading">Loading rooms...</div>
   <div v-if="!allRooms.loading && allRooms.error">Error loading rooms.</div>
-  <button @click="onUserLogout" class="bg-red-500 mt-4">Log Out</button>
+  <button @click="onUserLogout($router)" class="bg-red-500 mt-4">
+    Log Out
+  </button>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
-import { auth, roomsRef } from "../firebase";
-import useSnapshotOnce from "../hooks/useSnapshotOnce";
-import RoomCard from "../components/RoomCard.vue";
+import { roomsRef } from "@/firebase";
+import useAuth from "@/hooks/useAuth";
+import useSnapshotOnce from "@/hooks/useSnapshotOnce";
+import RoomCard from "@/components/RoomCard.vue";
 
 interface Room {
   id: string;
@@ -31,17 +34,9 @@ export default defineComponent({
     RoomCard,
   },
   setup() {
-    const router = useRouter();
     const { fbState: allRooms, fetchFromFB } = useSnapshotOnce<Room>(roomsRef);
+    const { onUserLogout } = useAuth();
     fetchFromFB();
-    const onUserLogout = async () => {
-      try {
-        await auth.signOut();
-        router.push({ name: "Login" });
-      } catch (err) {
-        console.log("Unable to logout.");
-      }
-    };
     return {
       onUserLogout,
       allRooms,

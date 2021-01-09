@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
-import { auth } from "../firebase";
+import Dashboard from "@/views/Dashboard.vue";
+import useAuth from "@/hooks/useAuth";
 
 // TODO: make meta its own TS interface, the Router docs seem incomplete
 const routes: Array<RouteRecordRaw> = [
@@ -44,11 +44,12 @@ const router = createRouter({
 });
 
 // checks if user is logged in on every navigation
-// uses some cool new features of Vue Router 4
-router.beforeEach(to => {
-  if (to.meta.requiresAuth && !auth.currentUser) {
+// waits for firebase auth on app initialization
+router.beforeEach(async to => {
+  const { getCurrentUser } = useAuth();
+  if (to.meta.requiresAuth && !(await getCurrentUser())) {
     return { name: "Login" }; // just to be explicit, use the name of the route
-  } else if (!to.meta.requiresAuth && auth.currentUser) {
+  } else if (!to.meta.requiresAuth && (await getCurrentUser())) {
     return { name: "Dashboard" };
   }
 });
