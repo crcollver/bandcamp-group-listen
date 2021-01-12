@@ -1,7 +1,9 @@
 <template>
   <div class="pa-4 border">
-    <h1>{{ room.title }}</h1>
-    <p>{{ room.online }}</p>
+    <router-link :to="{ name: 'Room', params: { id: room.id } }">
+      <h1>{{ room.title }}</h1>
+      <p>{{ room.online }}</p>
+    </router-link>
   </div>
 </template>
 

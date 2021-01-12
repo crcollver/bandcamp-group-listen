@@ -2,12 +2,11 @@
   <div v-if="!allRooms.loading && !allRooms.error">
     <RoomCard
       class="mt-4"
-      v-for="room in allRooms.data"
+      v-for="room in allRooms"
       :key="room.id"
       :room="room"
     />
   </div>
-  <router-link to="/room">To Room</router-link>
   <div v-if="allRooms.loading">Loading rooms...</div>
   <div v-if="!allRooms.loading && allRooms.error">Error loading rooms.</div>
   <button @click="onUserLogout($router)" class="bg-red-500 mt-4">
@@ -17,16 +16,9 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { roomsRef } from "@/firebase";
 import useAuth from "@/hooks/useAuth";
-import useSnapshotOnce from "@/hooks/useSnapshotOnce";
+import useRooms from "@/hooks/useRooms";
 import RoomCard from "@/components/RoomCard.vue";
-
-interface Room {
-  id: string;
-  title: string;
-  online: number;
-}
 
 export default defineComponent({
   name: "Dashboard",
@@ -34,12 +26,14 @@ export default defineComponent({
     RoomCard,
   },
   setup() {
-    const { fbState: allRooms, fetchFromFB } = useSnapshotOnce<Room>(roomsRef);
     const { onUserLogout } = useAuth();
-    fetchFromFB();
+    const { fetchRooms, rooms: allRooms, loading, error } = useRooms();
+    fetchRooms();
     return {
       onUserLogout,
       allRooms,
+      loading,
+      error,
     };
   },
 });

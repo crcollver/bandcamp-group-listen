@@ -24,7 +24,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/room",
+    path: "/room/:id",
     name: "Room",
     component: () => import(/* webpackChunkName: "Room" */ "../views/Room.vue"),
     meta: {
