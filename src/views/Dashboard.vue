@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!allRooms.loading && !allRooms.error">
+  <div v-if="!loading && !error">
     <RoomCard
       class="mt-4"
       v-for="room in allRooms"
@@ -7,18 +7,24 @@
       :room="room"
     />
   </div>
-  <div v-if="allRooms.loading">Loading rooms...</div>
-  <div v-if="!allRooms.loading && allRooms.error">Error loading rooms.</div>
+  <div v-if="loading">Loading rooms...</div>
+  <div v-if="!loading && error">Error loading rooms.</div>
   <button @click="onUserLogout($router)" class="bg-red-500 mt-4">
     Log Out
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import useAuth from "@/hooks/useAuth";
-import useRooms from "@/hooks/useRooms";
-import RoomCard from "@/components/RoomCard.vue";
+import { defineComponent, ref } from "vue";
+import { roomsRef } from "@/firebase";
+import useAuth from "@/composables/useAuth";
+import RoomCard from "@/components/Dashboard/RoomCard.vue";
+
+interface Room {
+  id: string;
+  title: string;
+  online: number;
+}
 
 export default defineComponent({
   name: "Dashboard",
@@ -27,14 +33,25 @@ export default defineComponent({
   },
   setup() {
     const { onUserLogout } = useAuth();
-    const { fetchRooms, rooms: allRooms, loading, error } = useRooms();
-    fetchRooms();
-    return {
-      onUserLogout,
-      allRooms,
-      loading,
-      error,
+    const allRooms = ref<Room[]>([]);
+    const loading = ref<boolean>(true);
+    const error = ref<string>("");
+
+    const fetchRooms = async () => {
+      try {
+        await roomsRef.once("value", (snapshot) => {
+          snapshot.forEach((child) => {
+            allRooms.value.push({ id: child.key, ...child.val() });
+          });
+        });
+      } catch (err) {
+        error.value = "";
+      } finally {
+        loading.value = false;
+      }
     };
+    fetchRooms();
+    return { allRooms, loading, error, onUserLogout };
   },
 });
 </script>

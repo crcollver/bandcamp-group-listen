@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import useAuth from "@/hooks/useAuth";
+import useAuth from "@/composables/useAuth";
 
 export default defineComponent({
   name: "Login",

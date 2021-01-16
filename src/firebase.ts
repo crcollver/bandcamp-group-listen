@@ -16,6 +16,10 @@ export const auth = firebase.auth();
 export const roomsRef = database.ref("rooms");
 export const messagesRef = database.ref("messages");
 export const membersRef = database.ref("members");
+export const serverOffset = database.ref(".info/serverTimeOffset");
 export const createAuthProvider = () => {
   return new firebase.auth.GoogleAuthProvider();
+};
+export const createTimeStamp = () => {
+  return firebase.database.ServerValue.TIMESTAMP;
 };
