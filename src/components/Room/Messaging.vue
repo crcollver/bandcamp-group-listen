@@ -1,21 +1,23 @@
 <template>
-  <div v-if="allMessages.length" class="h-48 overflow-y-auto">
-    <message-bubble
-      v-for="message in allMessages"
-      :key="message.id"
-      :message="message"
-    />
+  <div>
+    <div v-if="allMessages.length" class="h-48 overflow-y-auto">
+      <message-bubble
+        v-for="message in allMessages"
+        :key="message.id"
+        :message="message"
+      />
+    </div>
+    <div v-if="loading">Loading messages...</div>
+    <div v-if="!allMessages.length && !loading" class="h-36">
+      No messages to display yet!
+    </div>
+    <div v-if="!loading && error">{{ error }}</div>
+    <message-box />
   </div>
-  <div v-if="loading">Loading messages...</div>
-  <div v-if="!allMessages.length && !loading" class="h-36">
-    No messages to display yet!
-  </div>
-  <div v-if="!loading && error">{{ error }}</div>
-  <message-box />
 </template>
 
 <script lang="ts">
-import { messagesRef, serverOffset } from "@/firebase";
+import { messagesRef } from "@/firebase";
 import MessageBox from "@/components/Room/MessageBox.vue";
 import MessageBubble from "@/components/Room/MessageBubble.vue";
 import { useRoute } from "vue-router";
@@ -45,27 +47,19 @@ export default {
 
     /**
      * Fetch all messages initially, then setup listener
-     * Uses server timestamp to get all messages after initial query
-     * Not sure how reliable this approach is this and if messages could be skipped?
+     * Firebase guarantees that "value" events always run after "child_" events
      */
     const createListener = async () => {
       try {
-        const msgSnap = await roomRef.once("value");
-        const timeSnap = await serverOffset.once("value");
-        const currentServerTime = Date.now() + timeSnap.val();
-        msgSnap.forEach((child) => {
-          allMessages.value.push({ id: child.key, ...child.val() });
+        roomRef.on("child_added", (snapshot) => {
+          allMessages.value.push({ id: snapshot.key, ...snapshot.val() });
         });
-        roomRef
-          .orderByChild("sentAt")
-          .startAt(currentServerTime)
-          .on("child_added", (snapshot) => {
-            allMessages.value.push({ id: snapshot.key, ...snapshot.val() });
-          });
+        roomRef.once("value", () => {
+          loading.value = false;
+        });
       } catch (err) {
-        error.value = "Something went wrong while setting up messages.";
-      } finally {
-        loading.value = false;
+        console.error(err);
+        error.value = "Something went wrong setting up messages.";
       }
     };
 
@@ -79,6 +73,3 @@ export default {
   },
 };
 </script>
-
-<style>
-</style>
