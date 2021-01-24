@@ -11,14 +11,13 @@ export const app = firebase.initializeApp({
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 });
 
-firebase.database.enableLogging(true);
+// firebase.database.enableLogging(true);
 
 const database = firebase.database();
 export const auth = firebase.auth();
 export const roomsRef = database.ref("rooms");
 export const messagesRef = database.ref("messages");
-export const convertRef = database.ref("convertQueue");
-export const musicRef = database.ref("musicQueue");
+export const queueRef = database.ref("queue");
 export const createAuthProvider = () => {
   return new firebase.auth.GoogleAuthProvider();
 };

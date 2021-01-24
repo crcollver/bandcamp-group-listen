@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 
 admin.initializeApp();
 
-interface ConvertedTrack {
+interface Track {
   audioSrc: string;
   albumArt: string;
   artist: string;
@@ -68,7 +68,7 @@ exports.getBandcampAudio = functions.https.onCall(async (data, context) => {
   // push that audio to the appropriate queue for the room
   try {
     const queueRef = admin.database().ref(`queue/${roomID}`);
-    extractedTrackInfo.forEach((track: ConvertedTrack) => {
+    extractedTrackInfo.forEach((track: Track) => {
       queueRef.push(track);
     });
     return "Success";
