@@ -11,7 +11,7 @@ export const app = firebase.initializeApp({
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 });
 
-// firebase.database.enableLogging(true);
+firebase.database.enableLogging(true);
 
 const database = firebase.database();
 export const auth = firebase.auth();

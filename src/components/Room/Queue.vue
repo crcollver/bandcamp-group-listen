@@ -26,19 +26,9 @@
 
 <script lang="ts">
 import { queueRef } from "@/firebase";
-import { defineComponent, ref } from "vue";
+import { defineComponent, onBeforeUnmount, ref } from "vue";
 import { useRoute } from "vue-router";
-
-interface Track {
-  audioSrc: string;
-  albumArt: string;
-  artist: string;
-  albumTitle: string;
-  title: string;
-  duration: number;
-  originalUrl: string;
-  id: string;
-}
+import { Track } from "@/interfaces";
 
 export default defineComponent({
   name: "Queue",
@@ -63,6 +53,7 @@ export default defineComponent({
       });
     };
     createListener();
+    onBeforeUnmount(() => roomQueueRef.off());
     return { audioUrl, musicQueue };
   },
 });
