@@ -20,16 +20,9 @@
 import { messagesRef } from "@/firebase";
 import MessageBox from "@/components/Room/MessageBox.vue";
 import MessageBubble from "@/components/Room/MessageBubble.vue";
+import { Message } from "@/interfaces";
 import { useRoute } from "vue-router";
 import { onBeforeUnmount, ref } from "vue";
-
-export interface Message {
-  name: string;
-  uid: string;
-  message: string;
-  messageID: string;
-  sentAt: number;
-}
 
 export default {
   name: "Messaging",

@@ -11,3 +11,11 @@ export interface Track {
   endTime?: number;
   status: string;
 }
+
+export interface Message {
+  name: string;
+  uid: string;
+  message: string;
+  messageID: string;
+  sentAt: number;
+}

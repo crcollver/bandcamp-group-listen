@@ -17,7 +17,6 @@
         <h1>{{ track.title }}</h1>
         <h2>{{ track.albumTitle }}</h2>
         <h3>{{ track.artist }}</h3>
-        <p>{{ track.audioSrc }}</p>
       </li>
     </ul>
     <p v-if="!musicQueue.length">No songs in the queue yet!</p>
@@ -36,9 +35,7 @@ export default defineComponent({
     const audioUrl = ref<string>("");
     const musicQueue = ref<Track[]>([]);
     const route = useRoute();
-    const roomQueueRef = queueRef
-      .child(route.params.id.toString())
-      .limitToFirst(3);
+    const roomQueueRef = queueRef.child(route.params.id.toString());
 
     // initialize data with first tracks and watch for removals
     // since this is a queue, removals will occur on first item
@@ -48,8 +45,10 @@ export default defineComponent({
           musicQueue.value.shift(); // remove first element
         }
       });
-      roomQueueRef.on("child_added", (snapshot) => {
-        musicQueue.value.push({ id: snapshot.key, ...snapshot.val() });
+      roomQueueRef.limitToFirst(4).on("child_added", (snapshot) => {
+        if (snapshot.val().status === "queued") {
+          musicQueue.value.push({ id: snapshot.key, ...snapshot.val() });
+        }
       });
     };
     createListener();

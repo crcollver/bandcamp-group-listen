@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { Message } from "@/components/Room/Messaging.vue";
+import { Message } from "@/interfaces";
 import { PropType, defineComponent, computed } from "vue";
 export default defineComponent({
   name: "MessageBubble",
