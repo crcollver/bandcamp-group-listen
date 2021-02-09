@@ -11,7 +11,13 @@ import { Track } from "./interfaces";
  * @throws Formatted error that is sent to client in caller
  */
 export default async function(url: string): Promise<Track[]> {
-  // TODO: When would these operations fail?
+  if (!url) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "A URL must be provided."
+    );
+  }
+  // TODO: When else would these operations fail?
   const res = await fetch(url);
   const html = await res.text();
 
