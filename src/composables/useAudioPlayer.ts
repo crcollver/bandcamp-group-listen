@@ -65,7 +65,7 @@ export default function() {
     }
   };
 
-  // TODO: add event listener for ended track here with callback
+  // TODO: add event listener for "ended" track here with callback
   onMounted(() => {
     if (audioPlayer) {
       audioPlayer.volume = savedVolume;

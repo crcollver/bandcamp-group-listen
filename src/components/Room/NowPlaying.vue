@@ -11,7 +11,6 @@
     <p>{{ currentTime }} / {{ duration }}</p>
   </div>
   <p v-if="!currentTrack">Nothing playing yet!</p>
-  <!-- <audio ref="audioPlayer" controls></audio> -->
   <input
     type="range"
     min="0"
@@ -34,6 +33,13 @@ import { Track } from "@/interfaces";
 export default defineComponent({
   name: "NowPlaying",
   setup() {
+    const currentTrack = ref<Track | null>(null);
+
+    const route = useRoute();
+    const nowplayingRef = musicRef.child(
+      `${route.params.id.toString()}/nowplaying`
+    );
+
     const {
       playerVolume,
       isMuted,
@@ -44,15 +50,6 @@ export default defineComponent({
       setupTrack,
     } = useAudioPlayer();
 
-    const currentTrack = ref<Track | null>(null);
-
-    const route = useRoute();
-    const nowplayingRef = musicRef.child(
-      `${route.params.id.toString()}/nowplaying`
-    );
-
-    // since component is mounted, audio element is rendered
-    // can safely use audioPlayer ref without expectation of null
     const setupListeners = async () => {
       const offset: number = (await offsetRef.once("value")).val();
       nowplayingRef.on("child_removed", () => {
