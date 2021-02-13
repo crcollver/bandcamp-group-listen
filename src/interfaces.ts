@@ -19,3 +19,9 @@ export interface Message {
   messageID: string;
   sentAt: number;
 }
+
+export interface Room {
+  id: string;
+  title: string;
+  online: number;
+}

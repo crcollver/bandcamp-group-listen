@@ -19,12 +19,7 @@ import { defineComponent, ref } from "vue";
 import { roomsRef } from "@/firebase";
 import useAuth from "@/composables/useAuth";
 import RoomCard from "@/components/Dashboard/RoomCard.vue";
-
-interface Room {
-  id: string;
-  title: string;
-  online: number;
-}
+import { Room } from "@/interfaces";
 
 export default defineComponent({
   name: "Dashboard",

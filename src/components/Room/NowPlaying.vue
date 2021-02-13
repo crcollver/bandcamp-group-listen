@@ -11,12 +11,7 @@
     <p>{{ currentTime }} / {{ duration }}</p>
   </div>
   <p v-if="!currentTrack">Nothing playing yet!</p>
-  <audio
-    ref="audioPlayer"
-    controls
-    preload="auto"
-    @timeupdate="handleTimeUpdate"
-  ></audio>
+  <!-- <audio ref="audioPlayer" controls></audio> -->
   <input
     type="range"
     min="0"
@@ -40,14 +35,12 @@ export default defineComponent({
   name: "NowPlaying",
   setup() {
     const {
-      audioPlayer,
       playerVolume,
       isMuted,
       toggleMute,
       changeVolume,
       currentTime,
       duration,
-      handleTimeUpdate,
       setupTrack,
     } = useAudioPlayer();
 
@@ -73,11 +66,7 @@ export default defineComponent({
         };
         const startTime =
           (Date.now() + offset - currentTrack.value!.startTime!) / 1000;
-        setupTrack(
-          startTime,
-          currentTrack.value!.audioSrc,
-          currentTrack.value!.duration
-        );
+        setupTrack(startTime, currentTrack.value!.audioSrc);
       });
     };
 
@@ -93,14 +82,12 @@ export default defineComponent({
     return {
       currentTrack,
       finishTrack,
-      audioPlayer,
       playerVolume,
       isMuted,
       toggleMute,
       changeVolume,
       currentTime,
       duration,
-      handleTimeUpdate,
     };
   },
 });
