@@ -3,60 +3,104 @@
     <h1>{{ currentTrack.title }}</h1>
     <h2>{{ currentTrack.albumTitle }}</h2>
     <h3>{{ currentTrack.artist }}</h3>
-    <audio
-      :src="currentTrack.audioSrc"
-      controls
-      :currentTime="currentTrack.startTime"
-    ></audio>
     <img
       :src="currentTrack.albumArt"
       :alt="currentTrack.artist + currentTrack.title"
       class="w-48"
     />
+    <p>{{ currentTime }} / {{ duration }}</p>
   </div>
   <p v-if="!currentTrack">Nothing playing yet!</p>
+  <audio
+    ref="audioPlayer"
+    controls
+    preload="auto"
+    @timeupdate="handleTimeUpdate"
+  ></audio>
+  <input
+    type="range"
+    min="0"
+    max="1"
+    step="0.01"
+    v-model.number="playerVolume"
+    @input="changeVolume"
+  />
+  <button @click="toggleMute">{{ isMuted ? "Unmute" : "Mute" }}</button>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, ref } from "vue";
+import { defineComponent } from "vue";
+import useAudioPlayer from "@/composables/useAudioPlayer";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import { musicRef, offsetRef } from "@/firebase";
 import { Track } from "@/interfaces";
-import { queueRef, offsetRef } from "@/firebase";
 
 export default defineComponent({
   name: "NowPlaying",
   setup() {
+    const {
+      audioPlayer,
+      playerVolume,
+      isMuted,
+      toggleMute,
+      changeVolume,
+      currentTime,
+      duration,
+      handleTimeUpdate,
+      setupTrack,
+    } = useAudioPlayer();
+
     const currentTrack = ref<Track | null>(null);
-    let offset: number;
+
     const route = useRoute();
-    const roomQueueRef = queueRef
-      .child(route.params.id.toString())
-      .limitToFirst(1);
+    const nowplayingRef = musicRef.child(
+      `${route.params.id.toString()}/nowplaying`
+    );
 
-    const createListener = async () => {
-      offset = (await offsetRef.once("value")).val();
+    // since component is mounted, audio element is rendered
+    // can safely use audioPlayer ref without expectation of null
+    const setupListeners = async () => {
+      const offset: number = (await offsetRef.once("value")).val();
+      nowplayingRef.on("child_removed", () => {
+        currentTrack.value = null;
+      });
 
-      roomQueueRef.on("value", (snapshot) => {
-        if (!snapshot.exists()) {
-          currentTrack.value = null;
-        }
-        snapshot.forEach((childSnapshot) => {
-          currentTrack.value = {
-            id: childSnapshot.key,
-            ...childSnapshot.val(),
-          };
-          currentTrack.value!.startTime! =
-            (Date.now() + offset - currentTrack.value!.startTime!) / 1000;
-        });
+      nowplayingRef.limitToFirst(1).on("child_added", (snapshot) => {
+        currentTrack.value = {
+          id: snapshot.key,
+          ...snapshot.val(),
+        };
+        const startTime =
+          (Date.now() + offset - currentTrack.value!.startTime!) / 1000;
+        setupTrack(
+          startTime,
+          currentTrack.value!.audioSrc,
+          currentTrack.value!.duration
+        );
       });
     };
 
-    createListener();
-    onBeforeUnmount(() => {
-      roomQueueRef.off();
-    });
+    // request to remove track from nowplaying once it has finished
+    // no error is thrown when trying to remove non-existing item according to docs
+    const finishTrack = async () => {
+      await nowplayingRef.child(currentTrack.value!.id).remove();
+    };
+
+    onMounted(setupListeners);
+    onUnmounted(() => nowplayingRef.off());
+
     return {
       currentTrack,
+      finishTrack,
+      audioPlayer,
+      playerVolume,
+      isMuted,
+      toggleMute,
+      changeVolume,
+      currentTime,
+      duration,
+      handleTimeUpdate,
     };
   },
 });

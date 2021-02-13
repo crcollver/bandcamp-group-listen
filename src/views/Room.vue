@@ -1,7 +1,7 @@
 <template>
-  <messaging class="w-1/2" />
-  <now-playing></now-playing>
-  <queue />
+  <Messaging class="w-1/2" />
+  <NowPlaying />
+  <Queue />
 </template>
 
 <script lang="ts">

@@ -5,12 +5,12 @@ import { calculatePlayTime } from "./utils";
 import { Track } from "./interfaces";
 
 export default functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "Can only suggest music if authenticated."
-    );
-  }
+  // if (!context.auth) {
+  //   throw new functions.https.HttpsError(
+  //     "unauthenticated",
+  //     "Can only suggest music if authenticated."
+  //   );
+  // }
 
   const { url, roomID } = data;
   const extractedTrackInfo = await scrapeBandcamp(url);

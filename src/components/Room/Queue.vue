@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { queueRef } from "@/firebase";
+import { musicRef } from "@/firebase";
 import { defineComponent, onBeforeUnmount, ref } from "vue";
 import { useRoute } from "vue-router";
 import { Track } from "@/interfaces";
@@ -35,7 +35,7 @@ export default defineComponent({
     const audioUrl = ref<string>("");
     const musicQueue = ref<Track[]>([]);
     const route = useRoute();
-    const roomQueueRef = queueRef.child(route.params.id.toString());
+    const roomQueueRef = musicRef.child(`${route.params.id.toString()}/queue`);
 
     // initialize data with first tracks and watch for removals
     // since this is a queue, removals will occur on first item
@@ -46,9 +46,7 @@ export default defineComponent({
         }
       });
       roomQueueRef.limitToFirst(4).on("child_added", (snapshot) => {
-        if (snapshot.val().status === "queued") {
-          musicQueue.value.push({ id: snapshot.key, ...snapshot.val() });
-        }
+        musicQueue.value.push({ id: snapshot.key, ...snapshot.val() });
       });
     };
     createListener();
