@@ -9,7 +9,9 @@ export default function() {
   let savedVolume = playerVolume.value;
 
   const formatDuration = (seconds: number): string => {
-    const sec = Math.floor(seconds % 60);
+    let sec = Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0");
     const min = Math.floor(seconds / 60);
     const hour = Math.floor(seconds / 3600);
     return hour ? `${hour}:${min}:${sec}` : `${min}:${sec}`;
