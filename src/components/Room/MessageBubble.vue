@@ -24,6 +24,7 @@ export default defineComponent({
         const sent = new Date(timestamp);
         return sent.toLocaleString();
       }
+      return null;
     });
     return { formattedTime };
   },

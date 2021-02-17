@@ -18,7 +18,7 @@ const userState: UserStateType = reactive({
  * avoids having to use separate router instance for each function
  * would fit better with vuex pattern of mutations and actions
  */
-export default function() {
+export default function () {
   const onUserLogout = async (router: Router) => {
     try {
       await auth.signOut();
@@ -43,7 +43,7 @@ export default function() {
       if (userState.initialized) {
         resolve(auth.currentUser);
       }
-      const unsubscribe = auth.onAuthStateChanged(user => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
         userState.initialized = true; // add a timeout if the animation flash is too quick
         unsubscribe();
         resolve(user);

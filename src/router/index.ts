@@ -39,13 +39,13 @@ const routes: Array<RouteRecordRaw> = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHistory(),
   routes,
 });
 
 // checks if user is logged in on every navigation
 // waits for firebase auth on app initialization
-router.beforeEach(async to => {
+router.beforeEach(async (to) => {
   const { getCurrentUser } = useAuth();
   if (to.meta.requiresAuth && !(await getCurrentUser())) {
     return { name: "Login" }; // just to be explicit, use the name of the route

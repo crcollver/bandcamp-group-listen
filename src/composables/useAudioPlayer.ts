@@ -1,6 +1,6 @@
 import { onMounted, onUnmounted, ref } from "vue";
 
-export default function() {
+export default function () {
   const audioPlayer: HTMLAudioElement = new Audio();
   const currentTime = ref<string>("--:--");
   const duration = ref<string>("--:--");
