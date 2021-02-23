@@ -25,3 +25,9 @@ export interface Room {
   title: string;
   online: number;
 }
+
+export interface ListUser {
+  id: string;
+  name: string;
+  photo: string;
+}

@@ -21,6 +21,7 @@ const userState: UserStateType = reactive({
 export default function () {
   const onUserLogout = async (router: Router) => {
     try {
+      // TODO: if signout is available within rooms, remove connection node on logout
       await auth.signOut();
       router.push({ name: "Login" });
     } catch {
@@ -31,6 +32,8 @@ export default function () {
   const signInWithGoogle = async (router: Router) => {
     const provider = createAuthProvider(); // for now only a google auth provider
     try {
+      // if new name or profile photo is needed from google profile do it here
+      // check provider id and do user.updateProfile
       await auth.signInWithPopup(provider);
       router.push({ name: "Dashboard" });
     } catch (err) {

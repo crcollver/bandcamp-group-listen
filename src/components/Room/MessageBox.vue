@@ -33,6 +33,7 @@ export default {
           uid: user!.uid,
           message: message.value,
           sentAt: createTimeStamp(),
+          photo: user!.photoURL,
         });
         message.value = "";
       } catch (err) {

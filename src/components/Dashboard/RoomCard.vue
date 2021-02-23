@@ -9,12 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-
-interface Room {
-  id: string;
-  title: string;
-  online: number;
-}
+import { Room } from "@/interfaces";
 
 export default defineComponent({
   props: {
