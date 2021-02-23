@@ -1,4 +1,4 @@
-# firebase-chat-app
+# bandcamp-group-listen
 
 ## Project setup
 
