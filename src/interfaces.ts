@@ -31,3 +31,11 @@ export interface ListUser {
   name: string;
   photo: string;
 }
+
+export interface PlayerStatus {
+  volume: number;
+  hasEnded: boolean;
+  isMuted: boolean;
+  currentTime: string;
+  duration: string;
+}

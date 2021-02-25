@@ -8,7 +8,7 @@
       :alt="currentTrack.artist + currentTrack.title"
       class="w-48"
     />
-    <p>{{ currentTime }} / {{ duration }}</p>
+    <p>{{ playerStatus.currentTime }} / {{ playerStatus.duration }}</p>
   </div>
   <p v-if="!currentTrack">Nothing playing yet!</p>
   <input
@@ -16,11 +16,11 @@
     min="0"
     max="1"
     step="0.01"
-    v-model.number="volume"
+    v-model.number="playerStatus.volume"
     @input="changeVolume"
   />
   <button @click="toggleMute">
-    {{ isMuted ? "Unmute" : "Mute" }}
+    {{ playerStatus.isMuted ? "Unmute" : "Mute" }}
   </button>
 </template>
 
@@ -35,23 +35,18 @@ import { Track } from "@/interfaces";
 export default defineComponent({
   name: "NowPlaying",
   setup() {
-    const currentTrack = ref<Track | null>(null);
-
-    const route = useRoute();
-    const nowplayingRef = musicRef.child(
-      `${route.params.id.toString()}/nowplaying`
-    );
-
     const {
-      volume,
-      isMuted,
-      currentTime,
-      duration,
-      hasEnded,
+      playerStatus,
       toggleMute,
       changeVolume,
       setupTrack,
     } = useAudioPlayer();
+
+    const currentTrack = ref<Track | null>(null);
+    const route = useRoute();
+    const nowplayingRef = musicRef.child(
+      `${route.params.id.toString()}/nowplaying`
+    );
 
     const setupListeners = async () => {
       const offset: number = (await offsetRef.once("value")).val();
@@ -72,22 +67,21 @@ export default defineComponent({
 
     // request to remove track from nowplaying once it has finished
     // no error is thrown when trying to remove non-existing item according to docs
-    watch(hasEnded, async () => {
-      if (hasEnded.value) {
-        await nowplayingRef.child(currentTrack.value!.id).remove();
+    watch(
+      () => playerStatus.hasEnded,
+      async () => {
+        if (playerStatus.hasEnded) {
+          await nowplayingRef.child(currentTrack.value!.id).remove();
+        }
       }
-    });
+    );
 
     onMounted(setupListeners);
     onUnmounted(() => nowplayingRef.off());
 
     return {
       currentTrack,
-      volume,
-      isMuted,
-      currentTime,
-      duration,
-      hasEnded,
+      playerStatus,
       toggleMute,
       changeVolume,
     };

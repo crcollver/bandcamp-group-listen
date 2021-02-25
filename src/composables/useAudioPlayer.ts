@@ -1,12 +1,15 @@
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, reactive, readonly } from "vue";
+import { PlayerStatus } from "@/interfaces";
 
 export default function () {
   const audioPlayer: HTMLAudioElement = new Audio();
-  const currentTime = ref<string>("--:--");
-  const duration = ref<string>("--:--");
-  const volume = ref<number>(0);
-  const hasEnded = ref<boolean>(false);
-  const isMuted = ref<boolean>(true);
+  const playerStatus = reactive<PlayerStatus>({
+    volume: 0,
+    hasEnded: false,
+    isMuted: false,
+    currentTime: "--:--",
+    duration: "--:--",
+  });
   let savedVolume = 0.85;
 
   const formatDuration = (seconds: number): string => {
@@ -19,29 +22,29 @@ export default function () {
   };
 
   const handleTimeUpdate = () => {
-    currentTime.value = formatDuration(audioPlayer.currentTime);
+    playerStatus.currentTime = formatDuration(audioPlayer.currentTime);
   };
 
   const toggleMute = () => {
-    if (isMuted.value) {
-      volume.value = savedVolume;
+    if (playerStatus.isMuted) {
+      playerStatus.volume = savedVolume;
       audioPlayer.muted = false;
     } else {
-      volume.value = 0;
+      playerStatus.volume = 0;
       audioPlayer.muted = true;
     }
-    isMuted.value = !isMuted.value;
+    playerStatus.isMuted = !playerStatus.isMuted;
   };
 
   const changeVolume = () => {
-    audioPlayer.volume = volume.value;
-    savedVolume = volume.value;
+    audioPlayer.volume = playerStatus.volume;
+    savedVolume = playerStatus.volume;
     // if the user adjusts to 0, toggle mute
-    if (volume.value === 0) {
-      isMuted.value = true;
+    if (playerStatus.volume === 0) {
+      playerStatus.isMuted = true;
       audioPlayer.muted = true;
     } else {
-      isMuted.value = false;
+      playerStatus.isMuted = false;
       audioPlayer.muted = false;
     }
   };
@@ -52,11 +55,11 @@ export default function () {
     }
     audioPlayer.src = src;
     audioPlayer.currentTime = time;
-    hasEnded.value = false;
+    playerStatus.hasEnded = false;
   };
 
   const playTrack = async () => {
-    duration.value = formatDuration(audioPlayer.duration);
+    playerStatus.duration = formatDuration(audioPlayer.duration);
     try {
       await audioPlayer.play();
     } catch (err) {
@@ -71,25 +74,27 @@ export default function () {
   onMounted(() => {
     if (audioPlayer) {
       audioPlayer.volume = savedVolume;
-      audioPlayer.muted = isMuted.value;
+      audioPlayer.muted = playerStatus.isMuted;
       audioPlayer.addEventListener("timeupdate", handleTimeUpdate);
       audioPlayer.addEventListener("loadedmetadata", playTrack);
-      audioPlayer.addEventListener("ended", () => (hasEnded.value = true));
+      audioPlayer.addEventListener(
+        "ended",
+        () => (playerStatus.hasEnded = true)
+      );
     }
   });
 
   onUnmounted(() => {
     audioPlayer.removeEventListener("timeupdate", handleTimeUpdate);
     audioPlayer.removeEventListener("loadedmetadata", playTrack);
-    audioPlayer.removeEventListener("ended", () => (hasEnded.value = true));
+    audioPlayer.removeEventListener(
+      "ended",
+      () => (playerStatus.hasEnded = true)
+    );
   });
 
   return {
-    volume,
-    isMuted,
-    currentTime,
-    duration,
-    hasEnded,
+    playerStatus: readonly(playerStatus),
     toggleMute,
     changeVolume,
     setupTrack,
