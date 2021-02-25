@@ -4,7 +4,8 @@ export default function () {
   const audioPlayer: HTMLAudioElement = new Audio();
   const currentTime = ref<string>("--:--");
   const duration = ref<string>("--:--");
-  const playerVolume = ref<number>(0);
+  const volume = ref<number>(0);
+  const hasEnded = ref<boolean>(false);
   const isMuted = ref<boolean>(true);
   let savedVolume = 0.85;
 
@@ -23,20 +24,20 @@ export default function () {
 
   const toggleMute = () => {
     if (isMuted.value) {
-      playerVolume.value = savedVolume;
+      volume.value = savedVolume;
       audioPlayer.muted = false;
     } else {
-      playerVolume.value = 0;
+      volume.value = 0;
       audioPlayer.muted = true;
     }
     isMuted.value = !isMuted.value;
   };
 
   const changeVolume = () => {
-    audioPlayer.volume = playerVolume.value;
-    savedVolume = playerVolume.value;
+    audioPlayer.volume = volume.value;
+    savedVolume = volume.value;
     // if the user adjusts to 0, toggle mute
-    if (playerVolume.value === 0) {
+    if (volume.value === 0) {
       isMuted.value = true;
       audioPlayer.muted = true;
     } else {
@@ -51,6 +52,7 @@ export default function () {
     }
     audioPlayer.src = src;
     audioPlayer.currentTime = time;
+    hasEnded.value = false;
   };
 
   const playTrack = async () => {
@@ -72,20 +74,22 @@ export default function () {
       audioPlayer.muted = isMuted.value;
       audioPlayer.addEventListener("timeupdate", handleTimeUpdate);
       audioPlayer.addEventListener("loadedmetadata", playTrack);
+      audioPlayer.addEventListener("ended", () => (hasEnded.value = true));
     }
   });
 
   onUnmounted(() => {
     audioPlayer.removeEventListener("timeupdate", handleTimeUpdate);
     audioPlayer.removeEventListener("loadedmetadata", playTrack);
+    audioPlayer.removeEventListener("ended", () => (hasEnded.value = true));
   });
 
   return {
-    audioPlayer,
-    playerVolume,
+    volume,
     isMuted,
     currentTime,
     duration,
+    hasEnded,
     toggleMute,
     changeVolume,
     setupTrack,

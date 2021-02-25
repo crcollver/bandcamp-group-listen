@@ -16,16 +16,18 @@
     min="0"
     max="1"
     step="0.01"
-    v-model.number="playerVolume"
+    v-model.number="volume"
     @input="changeVolume"
   />
-  <button @click="toggleMute">{{ isMuted ? "Unmute" : "Mute" }}</button>
+  <button @click="toggleMute">
+    {{ isMuted ? "Unmute" : "Mute" }}
+  </button>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import useAudioPlayer from "@/composables/useAudioPlayer";
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { musicRef, offsetRef } from "@/firebase";
 import { Track } from "@/interfaces";
@@ -41,12 +43,13 @@ export default defineComponent({
     );
 
     const {
-      playerVolume,
+      volume,
       isMuted,
-      toggleMute,
-      changeVolume,
       currentTime,
       duration,
+      hasEnded,
+      toggleMute,
+      changeVolume,
       setupTrack,
     } = useAudioPlayer();
 
@@ -69,22 +72,24 @@ export default defineComponent({
 
     // request to remove track from nowplaying once it has finished
     // no error is thrown when trying to remove non-existing item according to docs
-    const finishTrack = async () => {
-      await nowplayingRef.child(currentTrack.value!.id).remove();
-    };
+    watch(hasEnded, async () => {
+      if (hasEnded.value) {
+        await nowplayingRef.child(currentTrack.value!.id).remove();
+      }
+    });
 
     onMounted(setupListeners);
     onUnmounted(() => nowplayingRef.off());
 
     return {
       currentTrack,
-      finishTrack,
-      playerVolume,
+      volume,
       isMuted,
-      toggleMute,
-      changeVolume,
       currentTime,
       duration,
+      hasEnded,
+      toggleMute,
+      changeVolume,
     };
   },
 });
