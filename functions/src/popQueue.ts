@@ -13,7 +13,7 @@ export default functions.database
         // snapshot is a list, must use a forEach to access children properties
         // reuse auto-gen firebase ID from queue inside nowplaying
         let trackID: string = "";
-        nextTrackSnap.forEach(childSnapshot => {
+        nextTrackSnap.forEach((childSnapshot) => {
           trackID = childSnapshot.key!; // key cannot be null if snapshot exists
         });
 

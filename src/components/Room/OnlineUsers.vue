@@ -2,7 +2,12 @@
   <div class="text-lg mt-6">User List</div>
   <div v-for="user in sortedUserList" :key="user.id">
     <p>{{ user.name }}</p>
-    <img class="w-16 h-16 rounded-full" :src="user.photo" :alt="user.id" />
+    <img
+      class="w-16 h-16 rounded-full"
+      :src="user.photo"
+      :alt="user.id"
+      referrerpolicy="no-referrer"
+    />
   </div>
 </template>
 

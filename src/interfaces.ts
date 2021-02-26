@@ -23,7 +23,6 @@ export interface Message {
 export interface Room {
   id: string;
   title: string;
-  online: number;
 }
 
 export interface ListUser {

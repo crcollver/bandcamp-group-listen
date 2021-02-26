@@ -40,7 +40,7 @@ export default defineComponent({
           });
         });
       } catch (err) {
-        error.value = "";
+        error.value = "Something went wrong setting up rooms.";
       } finally {
         loading.value = false;
       }
