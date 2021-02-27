@@ -27,8 +27,11 @@ export default functions.https.onCall(async (data, context) => {
   // then push that audio to the appropriate now playing for the room
   try {
     const queueRef = admin.database().ref(`music/${roomID}/queue`);
+    const roomNowPlayingRef = admin
+      .database()
+      .ref(`rooms/${roomID}/nowplaying`);
     const nowPlayingRef = admin.database().ref(`music/${roomID}/nowplaying`);
-    const snapshot = await queueRef.once("value");
+    const snapshot = await queueRef.limitToFirst(1).once("value");
     if (!snapshot.exists()) {
       const [startTime, endTime] = calculatePlayTime(
         extractedTrackInfo[0].duration
@@ -37,10 +40,15 @@ export default functions.https.onCall(async (data, context) => {
       extractedTrackInfo[0].endTime = endTime;
       extractedTrackInfo[0].status = "playing";
       nowPlayingRef.push(extractedTrackInfo[0]); // first track now playing
-      extractedTrackInfo.shift(); // remove it from the list
+      roomNowPlayingRef.update({
+        artist: extractedTrackInfo[0].artist,
+        title: extractedTrackInfo[0].title,
+        albumArt: extractedTrackInfo[0].albumArt,
+      }); // set a preview on the room node for easy retrieval
+      extractedTrackInfo.shift(); // remove it from the queue
     }
     extractedTrackInfo.forEach((track: Track) => {
-      queueRef.push(track);
+      queueRef.push(track); // push remaining tracks (if any) to queue
     });
     return url;
   } catch (err) {
