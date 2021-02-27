@@ -23,6 +23,11 @@ export interface Message {
 export interface Room {
   id: string;
   title: string;
+  nowplaying: {
+    title: string;
+    artist: string;
+    albumArt: string;
+  };
 }
 
 export interface ListUser {

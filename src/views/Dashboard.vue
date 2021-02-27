@@ -1,21 +1,12 @@
 <template>
-  <div v-if="!loading && !error">
-    <RoomCard
-      class="mt-4"
-      v-for="room in allRooms"
-      :key="room.id"
-      :room="room"
-    />
-  </div>
-  <div v-if="loading">Loading rooms...</div>
-  <div v-if="!loading && error">Error loading rooms.</div>
+  <RoomCard class="mt-4" v-for="room in allRooms" :key="room.id" :room="room" />
   <button @click="onUserLogout($router)" class="bg-red-500 mt-4">
     Log Out
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onUnmounted, ref } from "vue";
 import { roomsRef } from "@/firebase";
 import useAuth from "@/composables/useAuth";
 import RoomCard from "@/components/Dashboard/RoomCard.vue";
@@ -29,24 +20,20 @@ export default defineComponent({
   setup() {
     const { onUserLogout } = useAuth();
     const allRooms = ref<Room[]>([]);
-    const loading = ref<boolean>(true);
-    const error = ref<string>("");
 
-    const fetchRooms = async () => {
-      try {
-        await roomsRef.once("value", (snapshot) => {
-          snapshot.forEach((child) => {
-            allRooms.value.push({ id: child.key, ...child.val() });
-          });
-        });
-      } catch (err) {
-        error.value = "Something went wrong setting up rooms.";
-      } finally {
-        loading.value = false;
-      }
-    };
-    fetchRooms();
-    return { allRooms, loading, error, onUserLogout };
+    roomsRef.on("child_added", (snapshot) => {
+      allRooms.value.push({ id: snapshot.key, ...snapshot.val() });
+    });
+    roomsRef.on("child_changed", (snapshot) => {
+      const idx = allRooms.value.findIndex((room) => room.id === snapshot.key);
+      allRooms.value[idx] = { id: snapshot.key, ...snapshot.val() };
+    });
+
+    onUnmounted(() => {
+      roomsRef.off();
+    });
+
+    return { allRooms, onUserLogout };
   },
 });
 </script>
