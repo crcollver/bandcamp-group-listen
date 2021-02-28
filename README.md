@@ -12,6 +12,8 @@
 
 - [ ] When no user remains in room, we could (1) remove start/end time on NowPlaying track and recalculate once someone rejoins the room or (2) clear the entire queue.
 
+- [ ] When Firebase token expires the onDisconnect handler doesn't seem to fire leaving a user who will be forever online. May need to provide timestamp for when a device was added and remove on client.
+
 - [ ] Style with TailwindCSS.
 
 ### Project setup
