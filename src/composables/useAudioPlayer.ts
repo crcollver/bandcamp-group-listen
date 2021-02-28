@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, reactive, readonly } from "vue";
+import { onMounted, onUnmounted, reactive } from "vue";
 import { PlayerStatus } from "@/interfaces";
 
 export default function () {
@@ -70,7 +70,6 @@ export default function () {
     }
   };
 
-  // TODO: add event listener for "ended" track here with callback
   onMounted(() => {
     if (audioPlayer) {
       audioPlayer.volume = savedVolume;
@@ -94,7 +93,7 @@ export default function () {
   });
 
   return {
-    playerStatus: readonly(playerStatus),
+    playerStatus,
     toggleMute,
     changeVolume,
     setupTrack,
