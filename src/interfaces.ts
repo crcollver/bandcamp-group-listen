@@ -28,6 +28,7 @@ export interface Room {
     artist: string;
     albumArt: string;
   };
+  online: number;
 }
 
 export interface ListUser {

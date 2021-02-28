@@ -2,10 +2,11 @@
   <div class="pa-4 border">
     <router-link :to="{ name: 'Room', params: { id: room.id } }">
       <h1>{{ room.title }}</h1>
+      <p>{{ room.online }} users listening.</p>
       <p v-if="room.nowplaying">
         Listening to: {{ room.nowplaying.title }} | {{ room.nowplaying.artist }}
       </p>
-      <p v-if="!room.nowplaying">Not listening to anything yet!</p>
+      <p v-if="!room.nowplaying">Nothing playing yet!</p>
     </router-link>
   </div>
 </template>

@@ -2,7 +2,7 @@
 
 ## Improvements
 
-- [ ] Cloud function for calculating online users in a room. Downloading entire status node and counting children is not feasible.
+- [x] Cloud function for calculating online users in a room. Downloading entire status node and counting children is not feasible. This feature will most likely only be for public rooms.
 
 - [ ] Username/picture preview of who is currently in rooms (limit of 3 or so)
 
