@@ -10,7 +10,7 @@ import { Track } from "./interfaces";
  * @returns Array of Tracks
  * @throws Formatted error that is sent to client in caller
  */
-export default async function(url: string): Promise<Track[]> {
+export default async function (url: string): Promise<Track[]> {
   if (!url) {
     throw new functions.https.HttpsError(
       "invalid-argument",
@@ -37,7 +37,7 @@ export default async function(url: string): Promise<Track[]> {
   const albumArt = $("#tralbumArt .popupImage img").attr("src");
 
   // filter out those without an audio source
-  // since Bandcamp can change surrounding data at any time, "any" is used
+  // since Bandcamp can change surrounding data at any time, "any" is used for now
   return trackinfo
     .filter((track: any) => track.file && track.file["mp3-128"])
     .map((track: any) => {

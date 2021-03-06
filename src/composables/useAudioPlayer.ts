@@ -6,7 +6,7 @@ export default function () {
   const playerStatus = reactive<PlayerStatus>({
     volume: 0,
     hasEnded: false,
-    isMuted: false,
+    isMuted: true,
     currentTime: "--:--",
     duration: "--:--",
   });

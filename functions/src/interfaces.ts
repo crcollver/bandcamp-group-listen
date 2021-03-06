@@ -9,4 +9,5 @@ export interface Track {
   status: string;
   startTime?: number;
   endTime?: number;
+  resumeDuration?: number;
 }
