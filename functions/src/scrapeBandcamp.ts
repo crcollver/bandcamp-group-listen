@@ -4,6 +4,21 @@ import fetch from "node-fetch";
 import { Track } from "./interfaces";
 
 /**
+ * Takes user given url and appends the appropriate track pathname to the
+ *  hostname.  Allows for recrawling individual songs even if album link was provided.
+ * @param originalUrl the original url that a user passes in
+ * @param trackTitle the track title_link property on a bandcamp track object
+ * @returns url formatted in protocol://hostname/trackTitle
+ */
+const concatTrackUrl = (originalUrl: string, trackTitle: string): string => {
+  const concatUrl = new URL(originalUrl);
+  const hostname = concatUrl.hostname;
+  const protocol = concatUrl.protocol;
+  concatUrl.href = protocol + hostname + trackTitle;
+  return concatUrl.href;
+};
+
+/**
  * Uses cheerio to fetch the HTML of the bandcamp link
  * Bandcamp seems to render the audio info on the server
  * @param url The url that the user passes in from the client
@@ -48,7 +63,7 @@ export default async function (url: string): Promise<Track[]> {
         albumTitle: bandInfo.album_title || "",
         title: track.title,
         duration: track.duration, // in seconds
-        originalUrl: url, // the original url passed in
+        trackUrl: concatTrackUrl(url, track.title_link),
         status: "queued",
       };
     });

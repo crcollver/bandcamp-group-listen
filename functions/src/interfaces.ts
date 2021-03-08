@@ -5,7 +5,7 @@ export interface Track {
   albumTitle: string | null;
   title: string;
   duration: number;
-  originalUrl: string;
+  trackUrl: string;
   status: string;
   startTime?: number;
   endTime?: number;

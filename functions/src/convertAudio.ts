@@ -36,10 +36,13 @@ export default functions.https.onCall(async (data, context) => {
       const [startTime, endTime] = calculatePlayTime(
         extractedTrackInfo[0].duration
       );
-      extractedTrackInfo[0].startTime = startTime;
-      extractedTrackInfo[0].endTime = endTime;
-      extractedTrackInfo[0].status = "playing";
-      nowPlayingRef.push(extractedTrackInfo[0]); // first track now playing
+      nowPlayingRef.push({
+        ...extractedTrackInfo[0],
+        startTime,
+        endTime,
+        status: "playing",
+        recrawl: false,
+      }); // first track now playing
       roomNowPlayingRef.update({
         artist: extractedTrackInfo[0].artist,
         title: extractedTrackInfo[0].title,
