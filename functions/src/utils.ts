@@ -10,8 +10,8 @@ export const calculatePlayTime = (
   duration: number,
   startOffset = 0
 ): [number, number] => {
-  const startTime = Date.now() - startOffset;
-  const endTime = startTime + duration * 1000;
+  const startTime = Math.round(Date.now() / 1000) - startOffset;
+  const endTime = startTime + duration;
   return [startTime, endTime];
 };
 

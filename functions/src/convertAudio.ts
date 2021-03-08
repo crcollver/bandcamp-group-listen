@@ -41,7 +41,7 @@ export default functions.https.onCall(async (data, context) => {
         startTime,
         endTime,
         status: "playing",
-        recrawl: false,
+        rescrape: false,
       }); // first track now playing
       roomNowPlayingRef.update({
         artist: extractedTrackInfo[0].artist,

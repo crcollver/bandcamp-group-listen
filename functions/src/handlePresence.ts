@@ -33,7 +33,8 @@ export const savePlayback = functions.database
       .ref(`music/${context.params.roomID}/nowplaying`);
     const [trackID, trackInfo] = await peekFirstListItem<Track>(nowPlayingRef);
     if (trackInfo?.startTime && trackID) {
-      const resumeDuration = Date.now() - trackInfo.startTime;
+      const resumeDuration =
+        Math.round(Date.now() / 1000) - trackInfo.startTime;
       return nowPlayingRef
         .child(trackID)
         .update({ status: "paused", resumeDuration });

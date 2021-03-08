@@ -7,6 +7,7 @@ import {
   savePlayback,
   resumePlayback,
 } from "./handlePresence";
+import recrawlAudio from "./recrawlAudio";
 
 admin.initializeApp();
 
@@ -16,3 +17,4 @@ exports.incrementOnline = incrementOnline;
 exports.decrementOnline = decrementOnline;
 exports.savePlayback = savePlayback;
 exports.resumePlayback = resumePlayback;
+exports.recrawlAudio = recrawlAudio;
