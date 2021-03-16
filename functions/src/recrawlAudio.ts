@@ -16,12 +16,9 @@ export default functions.database
       // if rescrape is true, then the parent node exists and has audio info
       const trackInfo: Track = (await parentRef.once("value")).val();
 
-      // "ts" is in the query string of the scraped audio source link
-      const srcUrl = new URL(trackInfo!.audioSrc);
-      const tokenRefresh = srcUrl.searchParams.get("ts");
-
       // if the expected end time exceeds the tokenrefresh time, then rescrape
       const expectEndTime = trackInfo!.startTime! + trackInfo!.duration;
+      const tokenRefresh = trackInfo.expires;
       if (tokenRefresh && parseInt(tokenRefresh) <= expectEndTime) {
         const [trackToScrape] = await scrapeBandcamp(trackInfo!.trackUrl);
         return parentRef.update({

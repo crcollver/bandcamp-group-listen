@@ -56,13 +56,19 @@ export default async function (url: string): Promise<Track[]> {
   return trackinfo
     .filter((track: any) => track.file && track.file["mp3-128"])
     .map((track: any) => {
+      // "ts" is in the query string of the scraped audio source link
+      // it is the timestamp of when the link expires
+      const audioSrc = track.file["mp3-128"];
+      const srcUrl = new URL(audioSrc);
+      const expires = srcUrl.searchParams.get("ts");
       return {
-        audioSrc: track.file["mp3-128"],
+        audioSrc,
         albumArt,
         artist: bandInfo.artist,
         albumTitle: bandInfo.album_title || "",
         title: track.title,
         duration: track.duration, // in seconds
+        expires,
         trackUrl: concatTrackUrl(url, track.title_link),
         status: "queued",
       };

@@ -7,6 +7,7 @@ export interface Track {
   duration: number;
   originalUrl: string;
   id: string;
+  expires: string;
   startTime?: number;
   endTime?: number;
   status: string;

@@ -25,6 +25,10 @@ export default function () {
     playerStatus.currentTime = formatDuration(audioPlayer.currentTime);
   };
 
+  const onEnded = () => {
+    playerStatus.hasEnded = true;
+  };
+
   const toggleMute = () => {
     if (playerStatus.isMuted) {
       playerStatus.volume = savedVolume;
@@ -76,20 +80,14 @@ export default function () {
       audioPlayer.muted = playerStatus.isMuted;
       audioPlayer.addEventListener("timeupdate", handleTimeUpdate);
       audioPlayer.addEventListener("loadedmetadata", playTrack);
-      audioPlayer.addEventListener(
-        "ended",
-        () => (playerStatus.hasEnded = true)
-      );
+      audioPlayer.addEventListener("ended", onEnded);
     }
   });
 
   onUnmounted(() => {
     audioPlayer.removeEventListener("timeupdate", handleTimeUpdate);
     audioPlayer.removeEventListener("loadedmetadata", playTrack);
-    audioPlayer.removeEventListener(
-      "ended",
-      () => (playerStatus.hasEnded = true)
-    );
+    audioPlayer.removeEventListener("ended", onEnded);
   });
 
   return {

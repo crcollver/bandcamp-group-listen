@@ -6,6 +6,7 @@ export interface Track {
   title: string;
   duration: number;
   trackUrl: string;
+  expires: string;
   status: string;
   rescrape?: boolean;
   startTime?: number;
