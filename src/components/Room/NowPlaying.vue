@@ -48,8 +48,25 @@ export default defineComponent({
       `${route.params.id.toString()}/nowplaying`
     );
 
+    /**
+     * Compares expected end time to track token expiry time
+     * @param serverTime calculated server offset in seconds
+     * @returns true if track is expired
+     */
+    const trackExpired = (serverTime: number) => {
+      const trackInfo = currentTrack.value;
+      if (trackInfo) {
+        const expectedEndTime = serverTime + trackInfo.duration;
+        if (parseInt(trackInfo.expires) <= expectedEndTime) {
+          return true;
+        }
+      }
+      return false;
+    };
+
     const setupListeners = async () => {
-      const offset: number = (await offsetRef.once("value")).val();
+      const offset = (await offsetRef.once("value")).val();
+      const serverTime = Math.round((Date.now() + offset) / 1000);
       nowplayingRef.on("child_removed", () => {
         currentTrack.value = null;
       });
@@ -59,9 +76,15 @@ export default defineComponent({
           id: snapshot.key,
           ...snapshot.val(),
         };
-        const startTime =
-          (Date.now() + offset - currentTrack.value!.startTime!) / 1000;
-        setupTrack(startTime, currentTrack.value!.audioSrc);
+        const startTime = serverTime - currentTrack.value!.startTime!;
+        if (!trackExpired(serverTime)) {
+          return setupTrack(startTime, currentTrack.value!.audioSrc);
+        } else {
+          // rescrape the nowplaying track
+          return nowplayingRef
+            .child(`${currentTrack.value!.id}/rescrape`)
+            .set(true);
+        }
       });
     };
 
