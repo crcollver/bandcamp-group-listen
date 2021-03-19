@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import scrapeBandcamp from "./scrapeBandcamp";
+import { getLinkExpireTime } from "./utils";
 import { Track } from "./interfaces";
 /**
  * When client cannot playback audio source, they auto request a rescrape
@@ -15,14 +16,15 @@ export default functions.database
       const parentRef = change.after.ref.parent!;
       // if rescrape is true, then the parent node exists and has audio info
       const trackInfo: Track = (await parentRef.once("value")).val();
-
       // if the expected end time exceeds the tokenrefresh time, then rescrape
       const expectEndTime = trackInfo!.startTime! + trackInfo!.duration;
       const tokenRefresh = trackInfo.expires;
       if (tokenRefresh && parseInt(tokenRefresh) <= expectEndTime) {
         const [trackToScrape] = await scrapeBandcamp(trackInfo!.trackUrl);
+        const audioSrc = trackToScrape.audioSrc;
         return parentRef.update({
-          audioSrc: trackToScrape.audioSrc,
+          audioSrc,
+          expires: getLinkExpireTime(audioSrc),
           rescrape: false,
         });
       }

@@ -26,6 +26,7 @@ export default function () {
   };
 
   const onEnded = () => {
+    audioPlayer.src = "";
     playerStatus.hasEnded = true;
   };
 

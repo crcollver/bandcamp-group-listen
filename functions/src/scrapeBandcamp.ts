@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as cheerio from "cheerio";
 import fetch from "node-fetch";
+import { getLinkExpireTime } from "./utils";
 import { Track } from "./interfaces";
 
 /**
@@ -59,8 +60,6 @@ export default async function (url: string): Promise<Track[]> {
       // "ts" is in the query string of the scraped audio source link
       // it is the timestamp of when the link expires
       const audioSrc = track.file["mp3-128"];
-      const srcUrl = new URL(audioSrc);
-      const expires = srcUrl.searchParams.get("ts");
       return {
         audioSrc,
         albumArt,
@@ -68,7 +67,7 @@ export default async function (url: string): Promise<Track[]> {
         albumTitle: bandInfo.album_title || "",
         title: track.title,
         duration: track.duration, // in seconds
-        expires,
+        expires: getLinkExpireTime(audioSrc),
         trackUrl: concatTrackUrl(url, track.title_link),
         status: "queued",
       };

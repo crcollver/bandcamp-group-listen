@@ -49,6 +49,15 @@ export default defineComponent({
     );
 
     /**
+     * Gets the calculated time accounting for server offset
+     * @param offset the offset of server and client in milliseconds
+     * @returns current time in seconds
+     */
+    const getServerTimeSeconds = (offset: number) => {
+      return Math.round((Date.now() + offset) / 1000);
+    };
+
+    /**
      * Compares expected end time to track token expiry time
      * @param serverTime calculated server offset in seconds
      * @returns true if track is expired
@@ -65,25 +74,37 @@ export default defineComponent({
     };
 
     const setupListeners = async () => {
-      const offset = (await offsetRef.once("value")).val();
-      const serverTime = Math.round((Date.now() + offset) / 1000);
       nowplayingRef.on("child_removed", () => {
         currentTrack.value = null;
       });
 
+      const offset = (await offsetRef.once("value")).val();
       nowplayingRef.limitToFirst(1).on("child_added", (snapshot) => {
         currentTrack.value = {
           id: snapshot.key,
           ...snapshot.val(),
         };
+        const serverTime = getServerTimeSeconds(offset);
         const startTime = serverTime - currentTrack.value!.startTime!;
         if (!trackExpired(serverTime)) {
-          return setupTrack(startTime, currentTrack.value!.audioSrc);
+          setupTrack(startTime, currentTrack.value!.audioSrc);
         } else {
           // rescrape the nowplaying track
           return nowplayingRef
             .child(`${currentTrack.value!.id}/rescrape`)
             .set(true);
+        }
+      });
+      nowplayingRef.on("child_changed", (snapshot) => {
+        const changedTrack: Track = snapshot.val();
+        if (
+          currentTrack.value &&
+          changedTrack.audioSrc !== currentTrack.value.audioSrc
+        ) {
+          currentTrack.value.audioSrc = changedTrack.audioSrc;
+          const startTime =
+            getServerTimeSeconds(offset) - currentTrack.value!.startTime!;
+          setupTrack(startTime, currentTrack.value!.audioSrc);
         }
       });
     };
