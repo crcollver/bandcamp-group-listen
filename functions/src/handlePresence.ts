@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import { Track } from "./interfaces";
 import { calculatePlayTime, peekFirstListItem } from "./utils";
+
 export const incrementOnline = functions.database
   .ref("status/{roomID}/{uid}")
   .onCreate((snapshot, context) => {
@@ -44,7 +45,6 @@ export const savePlayback = functions.database
 /**
  * When a room is empty and a user enters:
  *  (1) recaculate start and end time for nowplaying
- *  (2) TODO: Check bandcamp token with current time and rescrape if needed
  */
 export const resumePlayback = functions.database
   .ref("status/{roomID}")

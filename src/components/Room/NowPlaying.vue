@@ -42,12 +42,6 @@ export default defineComponent({
       setupTrack,
     } = useAudioPlayer();
 
-    const currentTrack = ref<Track | null>(null);
-    const route = useRoute();
-    const nowplayingRef = musicRef.child(
-      `${route.params.id.toString()}/nowplaying`
-    );
-
     /**
      * Gets the calculated time accounting for server offset
      * @param offset the offset of server and client in milliseconds
@@ -57,15 +51,21 @@ export default defineComponent({
       return Math.round((Date.now() + offset) / 1000);
     };
 
+    const currentTrack = ref<Track | null>(null);
+    const route = useRoute();
+    const nowplayingRef = musicRef.child(
+      `${route.params.id.toString()}/nowplaying`
+    );
+
     /**
      * Compares expected end time to track token expiry time
      * @param serverTime calculated server offset in seconds
      * @returns true if track is expired
      */
-    const trackExpired = (serverTime: number) => {
+    const trackExpired = (startTime: number) => {
       const trackInfo = currentTrack.value;
       if (trackInfo) {
-        const expectedEndTime = serverTime + trackInfo.duration;
+        const expectedEndTime = startTime + trackInfo.duration;
         if (parseInt(trackInfo.expires) <= expectedEndTime) {
           return true;
         }
@@ -78,32 +78,50 @@ export default defineComponent({
         currentTrack.value = null;
       });
 
+      /**
+       * Listen for new tracks added to nowplaying, only play when:
+       *  (1) the status of the track is set to playing
+       *  (2) and when the track link is not expired
+       * Otherwise, set the rescrape flag for firebase functions to handle
+       */
       const offset = (await offsetRef.once("value")).val();
       nowplayingRef.limitToFirst(1).on("child_added", (snapshot) => {
         currentTrack.value = {
           id: snapshot.key,
           ...snapshot.val(),
         };
-        const serverTime = getServerTimeSeconds(offset);
-        const startTime = serverTime - currentTrack.value!.startTime!;
-        if (!trackExpired(serverTime)) {
-          setupTrack(startTime, currentTrack.value!.audioSrc);
-        } else {
-          // rescrape the nowplaying track
-          return nowplayingRef
-            .child(`${currentTrack.value!.id}/rescrape`)
-            .set(true);
+        if (currentTrack.value?.status === "playing") {
+          const serverTime = getServerTimeSeconds(offset);
+          const startTime = serverTime - currentTrack.value!.startTime!;
+          if (!trackExpired(startTime)) {
+            setupTrack(startTime, currentTrack.value!.audioSrc);
+          } else {
+            // rescrape the nowplaying track
+            return nowplayingRef
+              .child(`${currentTrack.value!.id}/rescrape`)
+              .set(true);
+          }
         }
       });
+
+      /**
+       * Listen for changes to nowplaying either when:
+       *  (1) the audio source has changed due to a recrawl
+       *  (2) or the track's status has changed to playing
+       */
       nowplayingRef.on("child_changed", (snapshot) => {
         const changedTrack: Track = snapshot.val();
         if (
-          currentTrack.value &&
-          changedTrack.audioSrc !== currentTrack.value.audioSrc
+          changedTrack.audioSrc !== currentTrack.value?.audioSrc ||
+          (changedTrack.status === "playing" &&
+            currentTrack.value?.status === "paused")
         ) {
-          currentTrack.value.audioSrc = changedTrack.audioSrc;
+          currentTrack.value = {
+            id: snapshot.key,
+            ...snapshot.val(),
+          };
           const startTime =
-            getServerTimeSeconds(offset) - currentTrack.value!.startTime!;
+            getServerTimeSeconds(offset) - currentTrack.value?.startTime!;
           setupTrack(startTime, currentTrack.value!.audioSrc);
         }
       });
