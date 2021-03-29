@@ -3,12 +3,11 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "serve": "npm run build && firebase emulators:start --only functions",
+    "emulators": "firebase emulators:start --only database",
     "shell": "firebase functions:shell",
-    "start": "npm run shell",
-    "test": "jest",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "jest": "jest",
+    "test": "firebase emulators:exec jest",
+    "deploy": "firebase deploy --only functions"
   },
   "engines": {
     "node": "12"
@@ -21,6 +20,7 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^1.2.5",
     "@types/jest": "^26.0.21",
     "@types/node-fetch": "^2.5.8",
     "firebase-functions-test": "^0.2.0",

@@ -1,0 +1,27 @@
+{
+  "rules": {
+    "rooms": {
+      ".read": "auth != null"
+    },
+    "messages": {
+      ".write": "auth != null",
+      ".read": "auth != null"
+    },
+    "music": {
+      ".read": "auth != null",
+      "$room_id": {
+        "nowplaying": {
+          ".write": "auth != null && data.child('endTime').val() <= now / 1000"
+        }
+      }
+    },
+    "status": {
+      ".read": "auth.uid != null",
+      "$room_id": {
+        "$uid": {
+          ".write": "auth.uid == $uid"
+        }
+      }
+    }
+  }
+}

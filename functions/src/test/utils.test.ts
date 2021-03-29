@@ -1,6 +1,6 @@
 import { calculatePlayTime } from "../utils";
 
-describe("calculated play time", () => {
+describe("calculatePlayTime", () => {
   let dateNowSeconds: number;
   beforeAll(() => {
     jest.useFakeTimers("modern");
