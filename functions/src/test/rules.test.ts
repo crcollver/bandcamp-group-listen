@@ -20,8 +20,18 @@ describe("Firebase Rules", () => {
     const db = useDB(myID);
     const path = "music/alternative/nowplaying/foo";
     await adminDB.ref(path).set({
-      endTime: Math.round(Date.now() / 1000) + 600, // timestamp in future
+      endTime: Math.floor(Date.now() / 1000) + 600, // timestamp in future
     });
     await firebase.assertFails(db.ref(path).remove());
+  });
+
+  // assume song has just ended and the request to remove nowplaying has been sent
+  test("user can delete nowplaying since endtime <= currentTime", async () => {
+    const db = useDB(myID);
+    const path = "music/alternative/nowplaying/foo";
+    await adminDB.ref(path).set({
+      endTime: Math.floor(Date.now() / 1000),
+    });
+    await firebase.assertSucceeds(db.ref(path).remove());
   });
 });

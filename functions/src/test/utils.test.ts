@@ -4,8 +4,8 @@ describe("calculatePlayTime", () => {
   let dateNowSeconds: number;
   beforeAll(() => {
     jest.useFakeTimers("modern");
-    jest.setSystemTime(1616184030458);
-    dateNowSeconds = Math.round(Date.now() / 1000);
+    jest.setSystemTime(1616184030408);
+    dateNowSeconds = Math.floor(Date.now() / 1000);
   });
   afterAll(() => {
     jest.useRealTimers();
