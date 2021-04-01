@@ -12,7 +12,7 @@
       "$room_id": {
         "nowplaying": {
           "$track_id": {
-            ".write": "auth != null && data.child('endTime').val() <= now / 1000"
+            ".write": "auth != null && ((data.exists() && !newData.exists() && data.child('endTime').val() <= now / 1000) || (data.exists() && newData.hasChildren(['rescrape']) && newData.child('rescrape').val() === true))"
           }
         }
       }

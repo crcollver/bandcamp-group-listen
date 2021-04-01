@@ -4,11 +4,11 @@ import firebase from "firebase";
 process.env.FIREBASE_DATABASE_EMULATOR_HOST = "localhost:9000";
 const PROJECT_ID = "music-chat-development";
 
-export const useDB = (userID: string | undefined = undefined) => {
+export const useDB = (userID: string | null) => {
   return tests
     .initializeTestApp({
       databaseName: PROJECT_ID,
-      auth: { uid: userID },
+      auth: userID ? { uid: userID } : undefined,
     })
     .database();
 };
