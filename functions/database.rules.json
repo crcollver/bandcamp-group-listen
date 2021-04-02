@@ -4,21 +4,44 @@
       ".read": "auth != null"
     },
     "messages": {
-      ".write": "auth != null",
-      ".read": "auth != null"
+      ".read": "auth != null",
+      "$room_id": {
+        "$message_id": {
+          // allow all authed users to create message
+          // edit/delete aren't common operations, handle in an http function instead
+          // otherwise RTDB rules get ridiculous
+          ".write": "auth != null && (!data.exists() && newData.exists())",
+          ".validate": "newData.hasChildren(['name', 'uid', 'message', 'sentAt', 'photo'])",
+          "uid": { ".validate": "newData.val() === auth.uid" },
+          "name": { ".validate": "newData.val() === auth.token.name" },
+          "sentAt": { ".validate": "newData.val() == now" },
+          "photo": {
+            ".validate": "newData.val().contains('.googleusercontent.com/')"
+          },
+          "message": {
+            ".validate": "newData.isString()"
+          }
+        }
+      }
     },
     "music": {
       ".read": "auth != null",
       "$room_id": {
         "nowplaying": {
           "$track_id": {
-            ".write": "auth != null && ((data.exists() && !newData.exists() && data.child('endTime').val() <= now / 1000) || (data.exists() && newData.hasChildren(['rescrape']) && newData.child('rescrape').val() === true))"
+            // allow update and removal by any authed user
+            ".write": "auth != null && ((data.exists() && !newData.exists() && data.child('endTime').val() <= now / 1000) || (data.exists() && newData.exists()))",
+            // validates below are not ran with remove requests
+            ".validate": "newData.hasChildren(['rescrape'])",
+            "rescrape": {
+              ".validate": "newData.val() === true"
+            }
           }
         }
       }
     },
     "status": {
-      ".read": "auth.uid != null",
+      ".read": "auth != null",
       "$room_id": {
         "$uid": {
           ".write": "auth.uid == $uid"

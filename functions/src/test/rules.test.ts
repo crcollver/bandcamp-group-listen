@@ -1,12 +1,16 @@
 import * as firebase from "@firebase/rules-unit-testing";
 import { useDB, useAdmin } from "./testHelpers";
-const myID = "myUserID";
 
-const [adminApp, adminDB] = useAdmin();
-const authDB = useDB(myID);
-const unAuthDB = useDB(null);
+const myAuth = {
+  uid: "myUserID",
+  name: "Test User",
+  email: "test@gmail.com",
+};
 
 describe("Firebase Rules", () => {
+  const [adminApp, adminDB] = useAdmin();
+  const authDB = useDB(myAuth);
+  const unAuthDB = useDB(null);
   afterEach(async () => {
     await adminDB.ref().set(null); // clear the database after each test
   });
@@ -57,6 +61,33 @@ describe("Firebase Rules", () => {
         rescrape: true,
         audioSrc: "foobar.com",
         albumTitle: "Foo",
+      })
+    );
+  });
+
+  const messagePath = "messages/alternative/1";
+  test("user cannot edit any message", async () => {
+    await adminDB.ref(messagePath).set({
+      message: "new message",
+    });
+    await firebase.assertFails(
+      authDB.ref(messagePath).update({ message: "update" })
+    );
+  });
+
+  test("user cannot delete any message", async () => {
+    await firebase.assertFails(authDB.ref(messagePath).remove());
+  });
+
+  test("user can send a message given all required fields", async () => {
+    await firebase.assertSucceeds(
+      authDB.ref(messagePath).set({
+        uid: myAuth.uid,
+        message: "Send Message",
+        sentAt: firebase.database.ServerValue.TIMESTAMP,
+        photo:
+          "https://lh3.googleusercontent.com/a-/AOh14Gg6SooS7eGbZdqHsJrNWqeCUW3d1VWgKlfSI74P=s96-c",
+        name: myAuth.name,
       })
     );
   });
