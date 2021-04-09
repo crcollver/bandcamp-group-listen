@@ -1,11 +1,5 @@
 import * as firebase from "@firebase/rules-unit-testing";
-import { useDB, useAdmin } from "./testHelpers";
-
-const myAuth = {
-  uid: "myUserID",
-  name: "Test User",
-  email: "test@gmail.com",
-};
+import { useDB, useAdmin, myAuth } from "./testHelpers";
 
 describe("Firebase Rules", () => {
   const [adminApp, adminDB] = useAdmin();

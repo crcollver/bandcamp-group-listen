@@ -2,7 +2,7 @@ import * as tests from "@firebase/rules-unit-testing";
 import firebase from "firebase";
 
 process.env.FIREBASE_DATABASE_EMULATOR_HOST = "localhost:9000";
-const PROJECT_ID = "music-chat-development";
+const PROJECT_ID = "music-chat-development-default-rtdb";
 
 interface Auth {
   uid: string;
@@ -28,4 +28,10 @@ export const useAdmin = (): [firebase.app.App, firebase.database.Database] => {
   const app = tests.initializeAdminApp({ databaseName: PROJECT_ID });
   const db = app.database();
   return [app, db];
+};
+
+export const myAuth = {
+  uid: "myUserID",
+  name: "Test User",
+  email: "test@gmail.com",
 };
