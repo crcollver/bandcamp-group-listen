@@ -33,13 +33,12 @@ export const savePlayback = functions.database
       .database()
       .ref(`music/${context.params.roomID}/nowplaying`);
     const [trackID, trackInfo] = await peekFirstListItem<Track>(nowPlayingRef);
-    if (trackInfo?.startTime && trackID) {
-      const resumeDuration =
-        Math.round(Date.now() / 1000) - trackInfo.startTime;
-      return nowPlayingRef
-        .child(trackID)
-        .update({ status: "paused", resumeDuration });
-    }
+    if (!trackInfo?.startTime || !trackID) return;
+
+    const resumeDuration = Math.round(Date.now() / 1000) - trackInfo.startTime;
+    return nowPlayingRef
+      .child(trackID)
+      .update({ status: "paused", resumeDuration });
   });
 
 /**
@@ -53,12 +52,12 @@ export const resumePlayback = functions.database
       .database()
       .ref(`music/${context.params.roomID}/nowplaying`);
     const [trackID, trackInfo] = await peekFirstListItem<Track>(nowPlayingRef);
-    if (trackInfo && trackID) {
-      const { resumeDuration, duration } = trackInfo;
-      const [startTime, endTime] = calculatePlayTime(duration, resumeDuration);
-      await nowPlayingRef.child(`${trackID}/resumeDuration`).remove();
-      return nowPlayingRef
-        .child(trackID)
-        .update({ status: "playing", startTime, endTime });
-    }
+    if (!trackInfo || !trackID) return;
+
+    const { resumeDuration, duration } = trackInfo;
+    const [startTime, endTime] = calculatePlayTime(duration, resumeDuration);
+    await nowPlayingRef.child(`${trackID}/resumeDuration`).remove();
+    return nowPlayingRef
+      .child(trackID)
+      .update({ status: "playing", startTime, endTime });
   });

@@ -3,7 +3,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "emulators": "firebase emulators:start --only database",
+    "emulators": "firebase emulators:start",
     "shell": "firebase functions:shell",
     "jest": "jest",
     "test": "firebase emulators:exec jest",

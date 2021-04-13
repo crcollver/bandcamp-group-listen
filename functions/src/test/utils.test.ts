@@ -1,11 +1,12 @@
 import { calculatePlayTime } from "../utils";
+import { getDateNowSeconds, FIXED_SYSTEM_TIME } from "./testHelpers";
 
 describe("calculatePlayTime", () => {
   let dateNowSeconds: number;
   beforeAll(() => {
     jest.useFakeTimers("modern");
-    jest.setSystemTime(1616184030408);
-    dateNowSeconds = Math.floor(Date.now() / 1000);
+    jest.setSystemTime(FIXED_SYSTEM_TIME);
+    dateNowSeconds = getDateNowSeconds();
   });
   afterAll(() => {
     jest.useRealTimers();
