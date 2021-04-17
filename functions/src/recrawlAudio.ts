@@ -31,4 +31,5 @@ export default functions.database
         rescrape: false,
       });
     }
+    return;
   });

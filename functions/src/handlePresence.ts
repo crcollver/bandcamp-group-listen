@@ -35,7 +35,7 @@ export const savePlayback = functions.database
     const [trackID, trackInfo] = await peekFirstListItem<Track>(nowPlayingRef);
     if (!trackInfo?.startTime || !trackID) return;
 
-    const resumeDuration = Math.round(Date.now() / 1000) - trackInfo.startTime;
+    const resumeDuration = Math.floor(Date.now() / 1000) - trackInfo.startTime;
     return nowPlayingRef
       .child(trackID)
       .update({ status: "paused", resumeDuration });
