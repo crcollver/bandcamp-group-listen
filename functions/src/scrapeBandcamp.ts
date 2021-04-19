@@ -1,4 +1,3 @@
-import * as functions from "firebase-functions";
 import * as cheerio from "cheerio";
 import fetch from "node-fetch";
 import { getLinkExpireTime } from "./utils";
@@ -9,7 +8,7 @@ import { Track } from "./interfaces";
  *  hostname.  Allows for recrawling individual songs even if album link was provided.
  * @param originalUrl the original url that a user passes in
  * @param trackTitle the track title_link property on a bandcamp track object
- * @returns url formatted in protocol://hostname/trackTitle
+ * @returns url formatted in https://bandname.bandcamp.com/trackTitle
  */
 const concatTrackUrl = (originalUrl: string, trackTitle: string): string => {
   const concatUrl = new URL(originalUrl);
@@ -28,24 +27,23 @@ const concatTrackUrl = (originalUrl: string, trackTitle: string): string => {
  */
 export default async function (url: string): Promise<Track[]> {
   if (!url) {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "A URL must be provided."
-    );
+    throw new Error("A URL must be provided.");
   }
-  // TODO: When else would these operations fail?
-  const res = await fetch(url);
-  const html = await res.text();
+
+  let html: string;
+  try {
+    const res = await fetch(url);
+    html = await res.text();
+  } catch (err) {
+    throw new Error("There was a problem fetching and parsing that link.");
+  }
 
   const $ = cheerio.load(html);
   // grab the script tag with the embedded album info
   const trackInfoNode = $("script[data-tralbum]");
   const { trackinfo } = trackInfoNode.data("tralbum") || {};
   if (!trackinfo) {
-    throw new functions.https.HttpsError(
-      "invalid-argument",
-      "There was no track information on this link."
-    );
+    throw new Error("There was no track information on this link.");
   }
 
   // get info like artist, album name, and art

@@ -92,9 +92,10 @@ export default (adminDB: firebase.database.Database) => {
           preview?.artist === queuedSong.artist &&
           preview?.title === queuedSong.title &&
           preview?.albumArt === queuedSong.albumArt
-        )
+        ) {
           roomNowPlayingRef.off();
-        done();
+          done();
+        }
       });
     });
   });
