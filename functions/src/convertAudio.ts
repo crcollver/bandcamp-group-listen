@@ -4,14 +4,8 @@ import scrapeBandcamp from "./scrapeBandcamp";
 import { calculatePlayTime } from "./utils";
 import { Track } from "./interfaces";
 
-export default functions.https.onCall(async (data, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      "unauthenticated",
-      "Can only suggest music if authenticated."
-    );
-  }
-
+// pull the function out so it's easier to test
+export const convertAudio = async (data: any) => {
   const { url, roomID } = data;
   let extractedTrackInfo: Track[] = [];
   try {
@@ -66,4 +60,14 @@ export default functions.https.onCall(async (data, context) => {
       err.message
     );
   }
+};
+
+export default functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+      "unauthenticated",
+      "Can only suggest music if authenticated."
+    );
+  }
+  convertAudio(data);
 });

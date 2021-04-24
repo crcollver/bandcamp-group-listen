@@ -1,6 +1,6 @@
-import firebase from "firebase";
+import * as admin from "firebase-admin";
 
-export default (adminDB: firebase.database.Database) => {
+export default (adminDB: admin.database.Database) => {
   const nowPlayingRef = adminDB.ref("music/alternative/nowplaying");
   const roomNowPlayingRef = adminDB.ref("rooms/alternative/nowplaying");
   const queueRef = adminDB.ref("music/alternative/queue");

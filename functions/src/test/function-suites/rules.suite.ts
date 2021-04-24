@@ -1,14 +1,32 @@
-import firebase from "firebase";
 import * as fb from "@firebase/rules-unit-testing";
-import { useDB, myAuth, getDateNowSeconds } from "../testHelpers";
+import { myAuth, getDateNowSeconds, PROJECT_ID } from "../testHelpers";
 
-export default (adminDB: firebase.database.Database) => {
+interface Auth {
+  uid: string;
+  name: string;
+  email: string;
+}
+
+const useDB = (userAuth: Auth | null) => {
+  return fb
+    .initializeTestApp({
+      databaseName: PROJECT_ID,
+      auth: userAuth ? userAuth : undefined,
+    })
+    .database();
+};
+
+export default () => {
   const authDB = useDB(myAuth);
   const unAuthDB = useDB(null);
+  const adminApp = fb.initializeAdminApp({ databaseName: PROJECT_ID });
+  const adminDB = adminApp.database();
+
   afterEach(async () => {
     await adminDB.ref().set(null); // clear the database after each test
   });
   afterAll(async () => {
+    await adminApp.delete();
     Promise.all(fb.apps().map((app) => app.delete()));
   });
 

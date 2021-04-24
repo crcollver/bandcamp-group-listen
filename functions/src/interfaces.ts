@@ -13,3 +13,9 @@ export interface Track {
   endTime?: number;
   resumeDuration?: number;
 }
+
+export interface TrackPreview {
+  albumArt: string;
+  title: string;
+  artist: string;
+}

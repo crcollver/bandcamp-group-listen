@@ -1,6 +1,7 @@
 import { myAuth, getDateNowSeconds } from "../testHelpers";
-import firebase from "firebase";
-export default (adminDB: firebase.database.Database) => {
+import * as admin from "firebase-admin";
+
+export default (adminDB: admin.database.Database) => {
   const statusRef = adminDB.ref(`status/alternative/${myAuth.uid}`);
   const onlineRef = adminDB.ref("rooms/alternative/online");
   const nowPlayingRef = adminDB.ref("music/alternative/nowplaying/song1");
