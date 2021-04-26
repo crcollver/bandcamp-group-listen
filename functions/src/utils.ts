@@ -40,7 +40,8 @@ export const peekFirstListItem = async <T>(
  * @param audioSrc the url of the bandcamp audio
  * @returns time in seconds that the audio link expires
  */
-export const getLinkExpireTime = (audioSrc: string): string | null => {
+export const getLinkExpireTime = (audioSrc: string): number | null => {
   const srcUrl = new URL(audioSrc);
-  return srcUrl.searchParams.get("ts");
+  const expires = srcUrl.searchParams.get("ts");
+  return expires ? parseInt(expires) : null;
 };

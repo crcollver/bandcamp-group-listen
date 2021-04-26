@@ -30,7 +30,7 @@ describe("scrapeBandcamp", () => {
     albumTitle: expect.any(String),
     title: expect.any(String),
     duration: expect.any(Number),
-    expires: expect.any(String),
+    expires: expect.any(Number),
     trackUrl: expect.any(String),
     status: expect.stringMatching("queued"),
   };

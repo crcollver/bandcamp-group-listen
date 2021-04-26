@@ -11,18 +11,19 @@ export default functions.database
   .ref("music/{roomID}/nowplaying/{trackID}/rescrape")
   .onUpdate(async (change) => {
     const shouldRescrape = change.after.val();
+    const rescrapeRef = change.after.ref;
     if (!shouldRescrape) return;
 
-    const parentRef = change.after.ref.parent!;
+    const parentRef = rescrapeRef.parent!;
     const trackInfo: Track = (await parentRef.once("value")).val();
 
     // if there is no trackUrl associated, then there is nothing to rescrape
-    if (!trackInfo?.trackUrl) return;
+    if (!trackInfo?.trackUrl) return change.after.ref.set(false);
 
     // if the expected end time exceeds the tokenrefresh time, then rescrape
     const expectEndTime = trackInfo!.startTime! + trackInfo!.duration;
     const tokenRefresh = trackInfo.expires;
-    if (tokenRefresh && parseInt(tokenRefresh) <= expectEndTime) {
+    if (tokenRefresh && tokenRefresh <= expectEndTime) {
       const [trackToScrape] = await scrapeBandcamp(trackInfo!.trackUrl);
       const audioSrc = trackToScrape.audioSrc;
       return parentRef.update({
@@ -31,5 +32,5 @@ export default functions.database
         rescrape: false,
       });
     }
-    return;
+    return rescrapeRef.set(false);
   });

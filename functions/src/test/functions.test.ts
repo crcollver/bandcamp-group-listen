@@ -1,12 +1,13 @@
+import rules from "./function-suites/rules.suite";
 import presence from "./function-suites/handlePresence.suite";
 import popQueue from "./function-suites/popQueue.suite";
-import rules from "./function-suites/rules.suite";
 import convertAudio from "./function-suites/convertAudio.suite";
+import recrawlAudio from "./function-suites/recrawlAudio.suite";
 import * as admin from "firebase-admin";
 import { DATABASE_URL } from "./testHelpers";
 
 /**
- * Having Jest runs each suite in parallel causes weird overwrites in emulator
+ * Having Jest run each suite in parallel causes weird overwrites in emulator
  * Sequentially running the test that write/read from database prevents issues
  * Any additional unit tests (.test.ts) will be run in parallel
  */
@@ -25,4 +26,5 @@ describe("Run Emulator Tests Sequentially", () => {
   describe("Presence Handling", () => presence(adminDB));
   describe("Pop Queue", () => popQueue(adminDB));
   describe("Convert Audio", () => convertAudio(adminDB));
+  describe("Recrawl Audio", () => recrawlAudio(adminDB));
 });

@@ -21,6 +21,7 @@ export default () => {
   const unAuthDB = useDB(null);
   const adminApp = fb.initializeAdminApp({ databaseName: PROJECT_ID });
   const adminDB = adminApp.database();
+  const roomID = "rulesTesting";
 
   afterEach(async () => {
     await adminDB.ref().set(null); // clear the database after each test
@@ -39,7 +40,7 @@ export default () => {
     await fb.assertFails(authDB.ref("rooms").set({ foo: "bar" }));
   });
 
-  const nowPlayingPath = "music/alternative/nowplaying/foo";
+  const nowPlayingPath = `music/${roomID}/nowplaying/foo`;
   test("user cannot delete nowplaying since endtime > currentTime", async () => {
     await adminDB.ref(nowPlayingPath).set({
       endTime: getDateNowSeconds() + 600, // timestamp in future
@@ -76,7 +77,7 @@ export default () => {
     );
   });
 
-  const messagePath = "messages/alternative/1";
+  const messagePath = `messages/${roomID}/1`;
   test("user cannot edit any message", async () => {
     await adminDB.ref(messagePath).set({
       message: "new message",
