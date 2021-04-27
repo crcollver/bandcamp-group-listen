@@ -4,6 +4,8 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "emulators": "firebase emulators:start",
+    "emulators:import": "firebase emulators:start --import=./db-import",
+    "emulators:export": "firebase emulators:export ./db-import",
     "shell": "firebase functions:shell",
     "jest": "jest",
     "test": "firebase emulators:exec jest",

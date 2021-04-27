@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
+import "firebase/functions";
 
 export const app = firebase.initializeApp({
   apiKey: import.meta.env.VITE_APP_FIREBASE_API_KEY,
@@ -14,6 +15,14 @@ export const app = firebase.initializeApp({
 firebase.database.enableLogging(true);
 
 const database = firebase.database();
+const functions = firebase.functions();
+
+if (location.hostname === "localhost") {
+  database.useEmulator("localhost", 9000);
+  functions.useEmulator("localhost", 5001);
+}
+
+export const convertAudio = functions.httpsCallable("convertAudio");
 export const auth = firebase.auth();
 export const roomsRef = database.ref("rooms");
 export const messagesRef = database.ref("messages");

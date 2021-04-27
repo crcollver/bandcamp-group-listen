@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="h-48 overflow-y-auto">
+    <div v-if="allMessages.length" class="h-48 overflow-y-auto">
       <message-bubble
         v-for="message in allMessages"
         :key="message.id"
