@@ -12,12 +12,11 @@ export const app = firebase.initializeApp({
   appId: import.meta.env.VITE_APP_FIREBASE_APP_ID,
 });
 
-firebase.database.enableLogging(true);
-
 const database = firebase.database();
 const functions = firebase.functions();
 
 if (location.hostname === "localhost") {
+  firebase.database.enableLogging(true);
   database.useEmulator("localhost", 9000);
   functions.useEmulator("localhost", 5001);
 }

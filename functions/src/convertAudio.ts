@@ -69,5 +69,5 @@ export default functions.https.onCall(async (data, context) => {
       "Can only suggest music if authenticated."
     );
   }
-  convertAudio(data);
+  return convertAudio(data);
 });

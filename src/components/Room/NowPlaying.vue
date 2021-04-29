@@ -42,11 +42,6 @@ export default defineComponent({
       setupTrack,
     } = useAudioPlayer();
 
-    /**
-     * Gets the calculated time accounting for server offset
-     * @param offset the offset of server and client in milliseconds
-     * @returns current time in seconds
-     */
     const getServerTimeSeconds = (offset: number) => {
       return Math.round((Date.now() + offset) / 1000);
     };
@@ -74,6 +69,8 @@ export default defineComponent({
     };
 
     const setupListeners = async () => {
+      // TODO: no need to set null on every removal
+      // need reference to queue to set to null when queue is empty
       nowplayingRef.on("child_removed", () => {
         currentTrack.value = null;
       });
