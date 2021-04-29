@@ -101,4 +101,19 @@ export default () => {
       })
     );
   });
+
+  const skipRef = `music/${roomID}/nowplaying/skipCount`;
+  test("user cannot request to skip by decrementing", async () => {
+    await adminDB.ref(skipRef).set(1);
+    await fb.assertFails(
+      authDB.ref(skipRef).transaction((skipCount) => skipCount - 1)
+    );
+  });
+
+  test("user cannot request multiple skips in one request", async () => {
+    await adminDB.ref(skipRef).set(1);
+    await fb.assertFails(
+      authDB.ref(skipRef).transaction((skipCount) => skipCount + 2)
+    );
+  });
 };
