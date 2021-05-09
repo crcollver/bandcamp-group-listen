@@ -3,6 +3,7 @@ import presence from "./function-suites/handlePresence.suite";
 import popQueue from "./function-suites/popQueue.suite";
 import convertAudio from "./function-suites/convertAudio.suite";
 import recrawlAudio from "./function-suites/recrawlAudio.suite";
+import skipAudio from "./function-suites/skipAudio.suite";
 import * as admin from "firebase-admin";
 import { DATABASE_URL } from "./testHelpers";
 
@@ -27,4 +28,5 @@ describe("Run Emulator Tests Sequentially", () => {
   describe("Pop Queue", () => popQueue(adminDB));
   describe("Convert Audio", () => convertAudio(adminDB));
   describe("Recrawl Audio", () => recrawlAudio(adminDB));
+  describe("skipAudio", () => skipAudio(adminDB));
 });

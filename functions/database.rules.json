@@ -28,11 +28,6 @@
       ".read": "auth != null",
       "$room_id": {
         "nowplaying": {
-          // allow increment by one of skipCount
-          "skipCount": {
-            ".write": "auth != null && ((data.exists() && newData.exists()) || (newData.exists() && !data.exists()))",
-            ".validate": "newData.isNumber() && (newData.val() === data.val() + 1 || newData.val() === 1)"
-          },
           "$track_id": {
             // allow update and removal by any authed user
             ".write": "auth != null && ((data.exists() && !newData.exists() && data.child('endTime').val() <= now / 1000) || (data.exists() && newData.exists()))",

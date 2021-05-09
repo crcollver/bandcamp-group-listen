@@ -22,6 +22,7 @@ if (location.hostname === "localhost") {
 }
 
 export const convertAudio = functions.httpsCallable("convertAudio");
+export const skipAudio = functions.httpsCallable("skipAudio");
 export const auth = firebase.auth();
 export const roomsRef = database.ref("rooms");
 export const messagesRef = database.ref("messages");

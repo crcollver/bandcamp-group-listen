@@ -5,7 +5,7 @@ import { knownGoodSingleUrls } from "../testHelpers";
 
 export default (adminDB: admin.database.Database) => {
   const params = {
-    roomID: "alternative",
+    roomID: "recrawlAudioRoom",
     url: knownGoodSingleUrls[1],
   };
   const nowPlayingRef = adminDB.ref(`music/${params.roomID}/nowplaying`);
