@@ -13,9 +13,9 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, onUnmounted, ref } from "vue";
-import { statusRef } from "@/firebase";
+import { statusRef } from "../../firebase";
 import { useRoute } from "vue-router";
-import { ListUser } from "@/interfaces";
+import { ListUser } from "../../interfaces";
 
 export default defineComponent({
   name: "OnlineUsers",

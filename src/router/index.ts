@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import Dashboard from "@/views/Dashboard.vue";
-import useAuth from "@/composables/useAuth";
+import Dashboard from "../views/Dashboard.vue";
+import useAuth from "../composables/useAuth";
 
 // TODO: make meta its own TS interface, the Router docs seem incomplete
 const routes: Array<RouteRecordRaw> = [

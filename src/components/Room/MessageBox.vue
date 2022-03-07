@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
-import useAuth from "@/composables/useAuth";
-import { messagesRef, createTimeStamp } from "@/firebase";
+import useAuth from "../../composables/useAuth";
+import { messagesRef, createTimeStamp } from "../../firebase";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 export default {

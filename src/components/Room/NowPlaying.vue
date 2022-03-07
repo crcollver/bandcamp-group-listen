@@ -26,21 +26,17 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import useAudioPlayer from "@/composables/useAudioPlayer";
+import useAudioPlayer from "../../composables/useAudioPlayer";
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { musicRef, offsetRef } from "@/firebase";
-import { Track } from "@/interfaces";
+import { musicRef, offsetRef } from "../../firebase";
+import { Track } from "../../interfaces";
 
 export default defineComponent({
   name: "NowPlaying",
   setup() {
-    const {
-      playerStatus,
-      toggleMute,
-      changeVolume,
-      setupTrack,
-    } = useAudioPlayer();
+    const { playerStatus, toggleMute, changeVolume, setupTrack } =
+      useAudioPlayer();
 
     const getServerTimeSeconds = (offset: number) => {
       return Math.round((Date.now() + offset) / 1000);

@@ -24,10 +24,10 @@
 </template>
 
 <script lang="ts">
-import { musicRef, convertAudio } from "@/firebase";
+import { musicRef, convertAudio } from "../../firebase";
 import { defineComponent, onBeforeUnmount, ref } from "vue";
 import { useRoute } from "vue-router";
-import { Track } from "@/interfaces";
+import { Track } from "../../interfaces";
 
 export default defineComponent({
   name: "Queue",
@@ -42,7 +42,8 @@ export default defineComponent({
      * Bandcamp urls can be a band's custom domain, so we allow all http urls
      */
     const onAddSong = async () => {
-      const validUrl = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
+      const validUrl =
+        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g;
       urlError.value = "";
 
       if (!validUrl.test(bandcampUrl.value)) {

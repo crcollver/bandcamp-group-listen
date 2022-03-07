@@ -1,6 +1,6 @@
 import { Router } from "vue-router";
 import firebase from "firebase/app";
-import { auth, createAuthProvider } from "@/firebase";
+import { auth, createAuthProvider } from "../firebase";
 import { reactive, readonly, toRefs } from "vue";
 
 // TODO: Once we need extra info on the user object, add a user object

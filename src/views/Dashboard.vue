@@ -7,10 +7,10 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted, ref } from "vue";
-import { roomsRef } from "@/firebase";
-import useAuth from "@/composables/useAuth";
-import RoomCard from "@/components/Dashboard/RoomCard.vue";
-import { Room } from "@/interfaces";
+import { roomsRef } from "../firebase";
+import useAuth from "../composables/useAuth";
+import RoomCard from "../components/Dashboard/RoomCard.vue";
+import { Room } from "../interfaces";
 
 export default defineComponent({
   name: "Dashboard",

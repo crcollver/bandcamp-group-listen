@@ -1,8 +1,8 @@
 import { onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import firebase from "firebase/app";
-import useAuth from "@/composables/useAuth";
-import { connectedRef, statusRef } from "@/firebase";
+import useAuth from "./useAuth";
+import { connectedRef, statusRef } from "../firebase";
 
 export default function () {
   let deviceID: firebase.database.ThenableReference;
